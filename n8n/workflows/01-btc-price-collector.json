@@ -1,0 +1,106 @@
+{
+  "name": "Bitcoin Price Collector",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "name": "Every 15 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.coingecko.com/api/v3/simple/price",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "ids",
+              "value": "bitcoin"
+            },
+            {
+              "name": "vs_currencies",
+              "value": "usd,eur"
+            },
+            {
+              "name": "include_market_cap",
+              "value": "true"
+            },
+            {
+              "name": "include_24hr_vol",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Get BTC Price (CoinGecko)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "indicator_btc_price_history",
+        "columns": [
+          {
+            "column": "timestamp",
+            "value": "={{ $now }}"
+          },
+          {
+            "column": "date",
+            "value": "={{ $now.toFormat('yyyy-MM-dd') }}"
+          },
+          {
+            "column": "price_usd",
+            "value": "={{ $json.bitcoin.usd }}"
+          },
+          {
+            "column": "price_eur",
+            "value": "={{ $json.bitcoin.eur }}"
+          },
+          {
+            "column": "volume_24h",
+            "value": "={{ $json.bitcoin.usd_24h_vol }}"
+          },
+          {
+            "column": "market_cap",
+            "value": "={{ $json.bitcoin.usd_market_cap }}"
+          },
+          {
+            "column": "source",
+            "value": "coingecko"
+          }
+        ]
+      },
+      "name": "Insert to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Every 15 minutes": {
+      "main": [[{"node": "Get BTC Price (CoinGecko)", "type": "main", "index": 0}]]
+    },
+    "Get BTC Price (CoinGecko)": {
+      "main": [[{"node": "Insert to Supabase", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "tags": ["bitcoin", "price", "collector"],
+  "pinData": {},
+  "meta": {
+    "instanceId": "patrimoinex"
+  }
+}

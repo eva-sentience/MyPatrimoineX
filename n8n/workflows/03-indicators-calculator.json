@@ -1,0 +1,36 @@
+{
+  "name": "Calculate All Indicators Daily",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT update_all_indicators(CURRENT_DATE);"
+      },
+      "name": "Run SQL Function",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [450, 300]
+    }
+  ],
+  "connections": {
+    "Every Hour": {
+      "main": [[{"node": "Run SQL Function", "type": "main", "index": 0}]]
+    }
+  }
+}

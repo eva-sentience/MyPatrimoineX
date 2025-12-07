@@ -1,0 +1,71 @@
+{
+  "name": "Bitcoin Dominance Collector",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "name": "Every 15 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.coingecko.com/api/v3/global",
+        "options": {}
+      },
+      "name": "Get Global Data (CoinGecko)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.item.json.data;\n\nconst btcDominance = data.market_cap_percentage.btc;\nconst totalMarketCap = data.total_market_cap.usd;\nconst btcMarketCap = totalMarketCap * (btcDominance / 100);\n\nreturn {\n  date: new Date().toISOString().split('T')[0],\n  dominance_percent: btcDominance.toFixed(2),\n  btc_market_cap: btcMarketCap,\n  total_market_cap: totalMarketCap,\n  is_below_45: btcDominance < 45,\n  signal: btcDominance < 45 ? 'altcoin_season' : btcDominance > 55 ? 'btc_dominance' : 'neutral',\n  source: 'coingecko'\n};"
+      },
+      "name": "Calculate Dominance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": "indicator_dominance_history",
+        "onConflict": "date",
+        "columns": [
+          {"column": "date", "value": "={{ $json.date }}"},
+          {"column": "dominance_percent", "value": "={{ $json.dominance_percent }}"},
+          {"column": "btc_market_cap", "value": "={{ $json.btc_market_cap }}"},
+          {"column": "total_market_cap", "value": "={{ $json.total_market_cap }}"},
+          {"column": "is_below_45", "value": "={{ $json.is_below_45 }}"},
+          {"column": "signal", "value": "={{ $json.signal }}"},
+          {"column": "source", "value": "={{ $json.source }}"}
+        ]
+      },
+      "name": "Upsert to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "Every 15 minutes": {
+      "main": [[{"node": "Get Global Data (CoinGecko)", "type": "main", "index": 0}]]
+    },
+    "Get Global Data (CoinGecko)": {
+      "main": [[{"node": "Calculate Dominance", "type": "main", "index": 0}]]
+    },
+    "Calculate Dominance": {
+      "main": [[{"node": "Upsert to Supabase", "type": "main", "index": 0}]]
+    }
+  }
+}

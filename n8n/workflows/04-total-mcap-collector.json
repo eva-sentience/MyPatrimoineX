@@ -1,0 +1,71 @@
+{
+  "name": "Total Crypto Market Cap Collector",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "name": "Every 15 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.coingecko.com/api/v3/global",
+        "options": {}
+      },
+      "name": "Get Global Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.item.json.data;\n\nconst totalMcap = data.total_market_cap.usd;\nconst ath = 3100000000000; // Approx ATH (update manually)\nconst distanceFromAth = ((totalMcap - ath) / ath) * 100;\n\nlet signal;\nif (distanceFromAth >= -2) signal = 'ath';\nelse if (distanceFromAth >= -10) signal = 'near_ath';\nelse if (distanceFromAth >= -30) signal = 'correction';\nelse signal = 'deep_correction';\n\nreturn {\n  date: new Date().toISOString().split('T')[0],\n  total_market_cap: totalMcap,\n  all_time_high: ath,\n  distance_from_ath: distanceFromAth.toFixed(2),\n  is_at_ath: distanceFromAth >= -2,\n  signal: signal,\n  source: 'coingecko'\n};"
+      },
+      "name": "Calculate Market Cap",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": "indicator_total_mcap_history",
+        "onConflict": "date",
+        "columns": [
+          {"column": "date", "value": "={{ $json.date }}"},
+          {"column": "total_market_cap", "value": "={{ $json.total_market_cap }}"},
+          {"column": "all_time_high", "value": "={{ $json.all_time_high }}"},
+          {"column": "distance_from_ath", "value": "={{ $json.distance_from_ath }}"},
+          {"column": "is_at_ath", "value": "={{ $json.is_at_ath }}"},
+          {"column": "signal", "value": "={{ $json.signal }}"},
+          {"column": "source", "value": "={{ $json.source }}"}
+        ]
+      },
+      "name": "Upsert to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "Every 15 minutes": {
+      "main": [[{"node": "Get Global Data", "type": "main", "index": 0}]]
+    },
+    "Get Global Data": {
+      "main": [[{"node": "Calculate Market Cap", "type": "main", "index": 0}]]
+    },
+    "Calculate Market Cap": {
+      "main": [[{"node": "Upsert to Supabase", "type": "main", "index": 0}]]
+    }
+  }
+}

@@ -13,6 +13,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export interface Database {
   public: {
     Tables: {
+      // Tables existantes
       patrimoinex_assets: {
         Row: {
           id: string;
@@ -77,6 +78,118 @@ export interface Database {
           created_at: string;
         };
       };
+
+      // ============================================
+      // NOUVELLES TABLES - INDICATEURS BITCOIN
+      // ============================================
+
+      // Table 1: Prix et volume Bitcoin
+      indicator_btc_price_history: {
+        Row: {
+          date: string;
+          price_usd: number;
+          price_eur: number;
+          volume_24h: number;
+          market_cap: number;
+          updated_at: string;
+        };
+      };
+
+      // Table 2: Moyennes mobiles
+      indicator_moving_averages: {
+        Row: {
+          date: string;
+          sma_20: number;
+          sma_50: number;
+          sma_200: number;
+          ema_12: number;
+          ema_26: number;
+          updated_at: string;
+        };
+      };
+
+      // Table 3: RSI (Relative Strength Index)
+      indicator_rsi: {
+        Row: {
+          date: string;
+          rsi_14: number;
+          avg_gain_14: number;
+          avg_loss_14: number;
+          updated_at: string;
+        };
+      };
+
+      // Table 4: MACD
+      indicator_macd: {
+        Row: {
+          date: string;
+          macd_line: number;
+          signal_line: number;
+          histogram: number;
+          updated_at: string;
+        };
+      };
+
+      // Table 5: Bollinger Bands
+      indicator_bollinger_bands: {
+        Row: {
+          date: string;
+          upper_band: number;
+          middle_band: number;
+          lower_band: number;
+          bandwidth: number;
+          percent_b: number;
+          updated_at: string;
+        };
+      };
+
+      // Table 6: OBV (On-Balance Volume)
+      indicator_obv: {
+        Row: {
+          date: string;
+          obv: number;
+          obv_ema: number;
+          updated_at: string;
+        };
+      };
+
+      // Table 7: Signaux de trading
+      indicator_trading_signals: {
+        Row: {
+          date: string;
+          overall_signal: string; // "BUY" | "SELL" | "NEUTRAL"
+          signal_strength: number; // 0-100
+          strong_buy_count: number;
+          buy_count: number;
+          neutral_count: number;
+          sell_count: number;
+          strong_sell_count: number;
+          updated_at: string;
+        };
+      };
     };
   };
+}
+
+// ============================================
+// TYPES HELPER POUR LES INDICATEURS
+// ============================================
+
+export type BTCPriceData = Database['public']['Tables']['indicator_btc_price_history']['Row'];
+export type MovingAveragesData = Database['public']['Tables']['indicator_moving_averages']['Row'];
+export type RSIData = Database['public']['Tables']['indicator_rsi']['Row'];
+export type MACDData = Database['public']['Tables']['indicator_macd']['Row'];
+export type BollingerBandsData = Database['public']['Tables']['indicator_bollinger_bands']['Row'];
+export type OBVData = Database['public']['Tables']['indicator_obv']['Row'];
+export type TradingSignalData = Database['public']['Tables']['indicator_trading_signals']['Row'];
+
+// Type combiné pour tous les indicateurs
+export interface AllIndicators {
+  price: BTCPriceData;
+  movingAverages: MovingAveragesData;
+  rsi: RSIData;
+  macd: MACDData;
+  bollingerBands: BollingerBandsData;
+  obv: OBVData;
+  tradingSignal: TradingSignalData;
 }

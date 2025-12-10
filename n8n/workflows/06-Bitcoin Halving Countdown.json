@@ -1,0 +1,66 @@
+{
+  "name": "Bitcoin Halving Countdown",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "days", "daysInterval": 1}]
+        },
+        "triggerTimes": {
+          "item": [{"hour": 0, "minute": 0}]
+        }
+      },
+      "name": "Every day at midnight",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 300],
+      "id": "schedule-halving"
+    },
+    {
+      "parameters": {
+        "url": "https://blockchain.info/latestblock",
+        "options": {}
+      },
+      "name": "Get Latest Block",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 300],
+      "id": "http-blockchain"
+    },
+    {
+      "parameters": {
+        "jsCode": "const hauteurActuelle = $input.item.json.height;\nconst prochainHalving = 1050000;\nconst blocsRestants = prochainHalving - hauteurActuelle;\n\nconst minutesRestantes = blocsRestants * 10;\nconst joursRestants = Math.round(minutesRestantes / 1440);\nconst anneesRestantes = (joursRestants / 365).toFixed(2);\n\nconst dateEstimee = new Date();\ndateEstimee.setDate(dateEstimee.getDate() + joursRestants);\n\nconst resultat = parseFloat(anneesRestantes) < 1 ? 'OUI' : 'NON';\n\nreturn {\n  nom_indicateur: 'halving_countdown',\n  categorie: 'on_chain',\n  valeur_numerique: parseFloat(anneesRestantes),\n  valeur_texte: resultat,\n  unite: 'annees',\n  source_api: 'blockchain.info',\n  delta_erreur_attendu: 1,\n  date_valeur: new Date().toISOString().split('T')[0],\n  metadata: {\n    hauteur_actuelle: hauteurActuelle,\n    blocs_restants: blocsRestants,\n    jours_restants: joursRestants,\n    date_estimee: dateEstimee.toISOString().split('T')[0],\n    prochain_halving_bloc: prochainHalving\n  }\n};"
+      },
+      "name": "Calculate Halving",
+      "type": "n8n-nodes-base.code",
+      "position": [680, 300],
+      "id": "code-halving"
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "create",
+        "tableId": "indicateurs_top_marche"
+      },
+      "name": "Create Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "position": [900, 300],
+      "credentials": {
+        "supabaseApi": {
+          "id": "ton_id_credential",
+          "name": "Supabase PatrimoineX"
+        }
+      },
+      "id": "supabase-create-halving"
+    }
+  ],
+  "connections": {
+    "Every day at midnight": {
+      "main": [[{"node": "Get Latest Block", "type": "main", "index": 0}]]
+    },
+    "Get Latest Block": {
+      "main": [[{"node": "Calculate Halving", "type": "main", "index": 0}]]
+    },
+    "Calculate Halving": {
+      "main": [[{"node": "Create Supabase", "type": "main", "index": 0}]]
+    }
+  }
+}

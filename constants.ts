@@ -1,5 +1,3 @@
-
-
 import { AssetType, CategoryConfig, EducationItem, MarketIndicator } from './types';
 
 export const ASSET_CATEGORIES: CategoryConfig[] = [
@@ -85,7 +83,7 @@ export const TOP_MARKET_INDICATORS: MarketIndicator[] = [
   {
     titleEng: "Bitcoin Rainbow Price Chart Indicator",
     titleFr: "Indicateur arc en ciel du prix du bitcoin",
-    description: "C'est un outil d’évaluation à long terme pour Bitcoin. Il utilise une courbe de croissance logarithmique pour prévoir l’orientation future potentielle des prix du Bitcoin.",
+    description: "C'est un outil d'évaluation à long terme pour Bitcoin. Il utilise une courbe de croissance logarithmique pour prévoir l'orientation future potentielle des prix du Bitcoin.",
     objective: "Zone Rouge / Orange / Jaune",
     source: "Bitcoin Magazine Pro",
     url: "https://www.bitcoinmagazinepro.com/charts/bitcoin-rainbow-chart/",
@@ -104,7 +102,7 @@ export const TOP_MARKET_INDICATORS: MarketIndicator[] = [
   {
     titleEng: "Pi Cycle Top Indicator",
     titleFr: "Indicateur du Top du cycle PI",
-    description: "L’indicateur Pi Cycle Top utilise la moyenne mobile de 111 jours (111DMA) et un multiple de la moyenne mobile de 350 jours (350DMA x 2).",
+    description: "L'indicateur Pi Cycle Top utilise la moyenne mobile de 111 jours (111DMA) et un multiple de la moyenne mobile de 350 jours (350DMA x 2).",
     objective: "Prix du bitcoin > courbe verte (350DMA x 2)",
     source: "Bitcoin Magazine Pro",
     url: "https://www.bitcoinmagazinepro.com/charts/pi-cycle-top-indicator/",
@@ -385,3 +383,339 @@ export const EDUCATIONAL_CONTENT: Record<AssetType, EducationItem[]> = {
   [AssetType.PRIVATE_EQUITY]: [],
   [AssetType.EXOTIC]: [],
 };
+
+// ============================================================================
+// 🆕 INDICATEURS DE TOP - 44 INDICATEURS EN 4 CATÉGORIES
+// ============================================================================
+
+// 1️⃣ INDICATEURS DE BASE (10) - Reprend TOP_MARKET_INDICATORS avec category
+export const BASE_INDICATORS = TOP_MARKET_INDICATORS.map(ind => ({
+  ...ind,
+  category: 'base' as const
+}));
+
+// 2️⃣ INDICATEURS MACRO (7)
+export const MACRO_INDICATORS: MarketIndicator[] = [
+  {
+    titleEng: "US Liquidity",
+    titleFr: "Liquidités sur le marché US",
+    description: "Indicateur qui prend en compte le bilan de la Réserve fédérale, les accords de prise en pension (RRP) et le compte général du Trésor Américain (TGA).",
+    objective: "Liquidités > 20%",
+    source: "Capriole",
+    url: "https://capriole.com/Charts/",
+    category: 'macro'
+  },
+  {
+    titleEng: "M2 Money Supply",
+    titleFr: "Masse monétaire M2",
+    description: "M2 est une mesure de la masse monétaire qui comprend les espèces, les dépôts-chèques et autres dépôts facilement convertibles. Les chiffres M2 sont étroitement surveillés en tant qu'indicateurs de la masse monétaire globale.",
+    objective: "À la hausse sur les 2/3 derniers mois",
+    source: "Trading Economics",
+    url: "https://tradingeconomics.com/united-states/money-supply-m2",
+    category: 'macro'
+  },
+  {
+    titleEng: "US Stock Market (Nasdaq)",
+    titleFr: "Indice du Nasdaq",
+    description: "Le NASDAQ est une bourse américaine spécialisée dans les sociétés technologiques. Quand le marché boursier est à la hausse, cela est souvent très positif pour le marché crypto.",
+    objective: "À la hausse sur les 2/3 derniers mois",
+    source: "YCharts",
+    url: "https://ycharts.com/indices/%5EIXIC",
+    category: 'macro'
+  },
+  {
+    titleEng: "Fed Interest Rate",
+    titleFr: "Taux d'intérêt de la FED",
+    description: "C'est le taux de refinancement minimum qui permet aux établissements bancaires de se refinancer auprès de la banque centrale. Des taux faibles stimulent l'économie par abondance de liquidités.",
+    objective: "En baisse",
+    source: "FRED",
+    url: "https://fred.stlouisfed.org/series/FEDFUNDS",
+    category: 'macro'
+  },
+  {
+    titleEng: "Fed Pivot",
+    titleFr: "Pivot de la FED",
+    description: "Changement de politique monétaire : Un pivot de la Fed implique souvent un passage de la hausse des taux d'intérêt à leur baisse, ou vice-versa.",
+    objective: "A déjà eu lieu",
+    source: "FRED",
+    url: "https://fred.stlouisfed.org/series/FEDFUNDS",
+    category: 'macro'
+  },
+  {
+    titleEng: "US Stock Market (S&P 500)",
+    titleFr: "Indice du S&P 500",
+    description: "L'indice S&P 500 est construit à partir de 500 grandes entreprises cotées aux USA. Quand le marché boursier est à la hausse, cela est souvent très positif pour le marché crypto.",
+    objective: "À la hausse sur les 2/3 derniers mois",
+    source: "Business Insider",
+    url: "https://markets.businessinsider.com/index/s&p_500",
+    category: 'macro'
+  },
+  {
+    titleEng: "ETF Inflow",
+    titleFr: "Entrées d'argent dans les ETFs Bitcoin",
+    description: "Correspond à l'argent des investisseurs qui est investi sur Bitcoin via l'ensemble des ETFs spot.",
+    objective: "Demande constante ou en hausse",
+    source: "Cryptonary",
+    url: "https://cryptonary.com/bitcoin-etf-inflows-tracker/",
+    category: 'macro'
+  }
+];
+
+// 3️⃣ INDICATEURS ON-CHAIN (15)
+export const ONCHAIN_INDICATORS: MarketIndicator[] = [
+  {
+    titleEng: "Bitcoin Heater",
+    titleFr: "Surchauffe du Bitcoin",
+    description: "Cet indicateur représente la survalorisation potentielle du Bitcoin en analysant notamment les produits dérivés. Des valeurs hautes suggèrent un fort sentiment de cupidité sur le marché.",
+    objective: "Bitcoin Heater > 0.8",
+    source: "Capriole",
+    url: "https://capriole.com/Charts/",
+    category: 'onchain'
+  },
+  {
+    titleEng: "Dynamic Range NVT",
+    titleFr: "Plage dynamique NVT",
+    description: "Le NVT est le rapport entre les transactions on-chain et la capitalisation boursière. L'utilisation de bandes permet d'identifier les régions de sous-évaluation et de surévaluation.",
+    objective: "Dynamic range NVT > Courbe rouge",
+    source: "Capriole",
+    url: "https://capriole.com/Charts/",
+    category: 'onchain'
+  },
+  {
+    titleEng: "On-chain Transaction Fees (Bitcoin)",
+    titleFr: "Frais de transaction On-chain (Bitcoin)",
+    description: "Représente les frais moyens par transaction sur Bitcoin. En période euphorique et de surchauffe de marché, les frais et les temps de transactions augmentent fortement.",
+    objective: "Frais moyen en constante augmentation sur les 6 derniers mois",
+    source: "BitInfoCharts",
+    url: "https://bitinfocharts.com/comparison/bitcoin-transactionfees.html",
+    category: 'onchain'
+  },
+  {
+    titleEng: "Fees on Ethereum",
+    titleFr: "Frais de transaction sur Ethereum",
+    description: "Représente les frais moyens par transaction sur Ethereum. En période euphorique, les frais augmentent fortement.",
+    objective: "Frais moyen en constante augmentation sur les 6 derniers mois",
+    source: "BitInfoCharts",
+    url: "https://bitinfocharts.com/comparison/ethereum-median_transaction_fee.html",
+    category: 'onchain'
+  },
+  {
+    titleEng: "Percent Addresses in Profit",
+    titleFr: "Pourcentage d'adresses en profit",
+    description: "Pourcentage d'adresses uniques dont les fonds ont un prix d'achat moyen inférieur au prix actuel.",
+    objective: "Percent of addresses in profit au dessus de 90%",
+    source: "Bitcoin Magazine Pro",
+    url: "https://www.bitcoinmagazinepro.com/charts/percent-addresses-in-profit/",
+    category: 'onchain'
+  },
+  {
+    titleEng: "MVRV Z-Score",
+    titleFr: "Score MVRV-Z",
+    description: "Permet d'identifier les périodes pendant lesquelles Bitcoin est extrêmement surévalué ou sous-évalué par rapport à sa juste valeur. Utilise la valeur marchande, la valeur réalisée et un test d'écart type.",
+    objective: "MVRV Z proche de la zone rouge ou dans la zone rouge",
+    source: "Bitcoin Magazine Pro",
+    url: "https://www.bitcoinmagazinepro.com/charts/mvrv-zscore/",
+    category: 'onchain'
+  },
+  {
+    titleEng: "Net Unrealized Profit/Loss (NUPL)",
+    titleFr: "Bénéfice/Perte Net Non Réalisé (NUPL)",
+    description: "Dérivé de la valeur marchande et de la valeur réalisée. Les profits/pertes non réalisés estiment le total des profits/pertes papier en Bitcoin détenus par les investisseurs.",
+    objective: "Courbe bleue dans la zone orange ou rouge",
+    source: "Bitcoin Magazine Pro",
+    url: "https://www.bitcoinmagazinepro.com/charts/relative-unrealized-profit--loss/",
+    category: 'onchain'
+  },
+  {
+    titleEng: "Reserve Risk",
+    titleFr: "Risque de réserve",
+    description: "Permet de visualiser la confiance des détenteurs de Bitcoin à long terme par rapport à son prix. Quand la confiance est faible et que le prix est élevé, le rapport risque/récompense est peu attrayant.",
+    objective: "Reserve Risk proche de la zone rouge ou dans la zone rouge",
+    source: "Bitcoin Magazine Pro",
+    url: "https://www.bitcoinmagazinepro.com/charts/reserve-risk/",
+    category: 'onchain'
+  },
+  {
+    titleEng: "Top Cap",
+    titleFr: "Top Cap",
+    description: "Calculé en prenant le Cap Moyen (somme cumulée de la capitalisation boursière divisée par l'âge du marché) multiplié par 35. A correctement prédit les sommets des cycles précédents.",
+    objective: "Prix du Bitcoin touche la courbe bleue ou s'en rapproche dangereusement",
+    source: "Bitcoin Magazine Pro",
+    url: "https://www.bitcoinmagazinepro.com/charts/top-cap/",
+    category: 'onchain'
+  },
+  {
+    titleEng: "Delta Top",
+    titleFr: "Delta Top",
+    description: "Delta Cap = Plafond réalisé - Plafond moyen. Les valeurs de Delta Cap sont ensuite multipliées par 7 pour obtenir Delta Top.",
+    objective: "Prix du Bitcoin touche la courbe violette ou s'en rapproche dangereusement",
+    source: "Bitcoin Magazine Pro",
+    url: "https://www.bitcoinmagazinepro.com/charts/delta-top/",
+    category: 'onchain'
+  },
+  {
+    titleEng: "Terminal Price",
+    titleFr: "Prix terminal",
+    description: "Calculé à partir du prix transféré (somme des Coin Days Destroyed divisée par l'offre existante) multiplié par 21. Crée une valeur terminale.",
+    objective: "Prix du Bitcoin touche la courbe rouge ou s'en rapproche dangereusement",
+    source: "Bitcoin Magazine Pro",
+    url: "https://www.bitcoinmagazinepro.com/charts/terminal-price/",
+    category: 'onchain'
+  },
+  {
+    titleEng: "HODL Wave",
+    titleFr: "Vague HODL",
+    description: "Montre la quantité de Bitcoin en circulation regroupée en différentes tranches d'âge. Une forte augmentation des coins jeunes indique que des bitcoins anciens sont vendus, souvent proche des sommets.",
+    objective: "Les nuances de rouge ont tendance à augmenter rapidement",
+    source: "Bitcoin Magazine Pro",
+    url: "https://www.bitcoinmagazinepro.com/charts/hodl-waves/",
+    category: 'onchain'
+  },
+  {
+    titleEng: "Fear and Greed Index",
+    titleFr: "Indice de peur et de cupidité",
+    description: "Identifie si le marché devient trop craintif ou trop cupide. Quand les acteurs sont extrêmement cupides, le prix est peut-être trop élevé.",
+    objective: "Greed ou Extreme Greed",
+    source: "Alternative.me",
+    url: "https://alternative.me/crypto/fear-and-greed-index/",
+    category: 'onchain'
+  },
+  {
+    titleEng: "Time Until Next Halving",
+    titleFr: "Temps avant le prochain Halving",
+    description: "Le halving est un événement programmé qui se produit tous les 4 ans (210 000 blocs) et divise par deux la quantité de nouveaux bitcoins créés.",
+    objective: "Halving dans plus de 2 ans",
+    source: "CoinGecko",
+    url: "https://www.coingecko.com/en/coins/bitcoin/bitcoin-halving",
+    category: 'onchain'
+  },
+  {
+    titleEng: "Puell Multiple",
+    titleFr: "Multiple de Puell",
+    description: "Examine les cycles du marché du point de vue des revenus miniers. Calculé en divisant la valeur d'émission quotidienne des bitcoins par la moyenne mobile sur 365 jours.",
+    objective: "Multiple Puell dans la zone Rouge",
+    source: "Bitcoin Magazine Pro",
+    url: "https://www.bitcoinmagazinepro.com/charts/puell-multiple/",
+    category: 'onchain'
+  }
+];
+
+// 4️⃣ INDICATEURS EMPIRIQUES (12)
+export const EMPIRICAL_INDICATORS: MarketIndicator[] = [
+  {
+    titleEng: "Ranking Crypto App Store",
+    titleFr: "Classement applications Crypto sur l'App Store",
+    description: "Observer le classement des apps crypto donne des indications sur la popularité du marché. Voir Coinbase ou Binance dans le Top 10 peut être synonyme de surchauffe.",
+    objective: "Classement > 20 (catégorie finance)",
+    source: "The Block",
+    url: "https://www.theblock.co/data/alternative-crypto-metrics/app-usage",
+    category: 'empirique'
+  },
+  {
+    titleEng: "Lots of New Projects Launched",
+    titleFr: "Lancement de nombreux nouveaux projets",
+    description: "En général, en bull market beaucoup de projets sont lancés via ICO/IEO/IDO. C'est l'inverse en bear.",
+    objective: "Beaucoup de nouveaux lancements",
+    source: "CoinCodex",
+    url: "https://coincodex.com/ieo-list/binance/",
+    category: 'empirique'
+  },
+  {
+    titleEng: "Google Trends (Bitcoin)",
+    titleFr: "Google Trends (Bitcoin)",
+    description: "Volume de recherche pour le terme Bitcoin sur Google. Un intérêt élevé indique souvent une attention du grand public.",
+    objective: "Volume de recherche historique > 50",
+    source: "Google Trends",
+    url: "https://trends.google.fr/trends/explore?q=bitcoin",
+    category: 'empirique'
+  },
+  {
+    titleEng: "Google Trends (Ethereum)",
+    titleFr: "Google Trends (Ethereum)",
+    description: "Volume de recherche pour le terme Ethereum sur Google. Un intérêt élevé indique souvent une attention du grand public.",
+    objective: "Volume de recherche historique > 50",
+    source: "Google Trends",
+    url: "https://trends.google.fr/trends/explore?q=ethereum",
+    category: 'empirique'
+  },
+  {
+    titleEng: "Google Trends (Buy Bitcoin)",
+    titleFr: "Google Trends (Acheter Bitcoin)",
+    description: "Volume de recherche pour buy bitcoin. Un pic indique que beaucoup de nouveaux investisseurs cherchent à entrer sur le marché.",
+    objective: "Volume de recherche historique > 50",
+    source: "Google Trends",
+    url: "https://trends.google.fr/trends/explore?q=buy%20bitcoin",
+    category: 'empirique'
+  },
+  {
+    titleEng: "Google Trends (Buy Ethereum)",
+    titleFr: "Google Trends (Acheter Ethereum)",
+    description: "Volume de recherche pour buy ethereum. Un pic indique que beaucoup de nouveaux investisseurs cherchent à entrer sur le marché.",
+    objective: "Volume de recherche historique > 50",
+    source: "Google Trends",
+    url: "https://trends.google.fr/trends/explore?q=buy%20ethereum",
+    category: 'empirique'
+  },
+  {
+    titleEng: "Crypto on Every Media",
+    titleFr: "Présence crypto sur tous les médias",
+    description: "Voir des informations très positives sur le marché en continu à la télé/radio/YouTube renseigne sur le sentiment global. Il est important d'acheter la dépression et revendre en période euphorique.",
+    objective: "Contenu très positif partout",
+    source: "Cointelegraph",
+    url: "https://fr.cointelegraph.com/",
+    category: 'empirique'
+  },
+  {
+    titleEng: "Everyone Talking About Profit",
+    titleFr: "Tout le monde parle de ses profits",
+    description: "Quand tout le monde affiche ses gains sur les réseaux sociaux, c'est souvent signe d'euphorie de marché proche d'un sommet.",
+    objective: "Contenu très positif partout",
+    source: "Cointelegraph",
+    url: "https://fr.cointelegraph.com/",
+    category: 'empirique'
+  },
+  {
+    titleEng: "Crypto Content Very Popular",
+    titleFr: "Le contenu crypto est très populaire",
+    description: "Quand le contenu crypto génère beaucoup d'engagement (vues, likes, partages), cela indique un fort intérêt du public.",
+    objective: "Contenu très positif partout",
+    source: "Cointelegraph",
+    url: "https://fr.cointelegraph.com/",
+    category: 'empirique'
+  },
+  {
+    titleEng: "Parabolic Price Move",
+    titleFr: "Augmentation parabolique du prix",
+    description: "Une hausse parabolique du prix (montée verticale sur le graphique) indique souvent une phase finale de cycle proche du sommet.",
+    objective: "Mouvement de prix parabolique observé",
+    source: "TradingView",
+    url: "https://www.tradingview.com",
+    category: 'empirique'
+  },
+  {
+    titleEng: "Only Good News",
+    titleFr: "Uniquement des bonnes nouvelles",
+    description: "Quand tous les médias ne relaient que des nouvelles positives sans aucune critique, c'est souvent signe d'euphorie excessive.",
+    objective: "Contenu très positif partout",
+    source: "Cointelegraph",
+    url: "https://fr.cointelegraph.com/",
+    category: 'empirique'
+  },
+  {
+    titleEng: "Lots of Updates on Popular Projects",
+    titleFr: "Mises à jour de projets populaires",
+    description: "En tendance haussière, de nouvelles mises à jour importantes sont annoncées même si elles étaient disponibles depuis plusieurs mois.",
+    objective: "Beaucoup de mises à jour",
+    source: "Cointelegraph",
+    url: "https://fr.cointelegraph.com/",
+    category: 'empirique'
+  }
+];
+
+// 🎯 EXPORT GLOBAL : 44 INDICATEURS COMBINÉS
+export const ALL_TOP_INDICATORS: MarketIndicator[] = [
+  ...BASE_INDICATORS,
+  ...MACRO_INDICATORS,
+  ...ONCHAIN_INDICATORS,
+  ...EMPIRICAL_INDICATORS
+];

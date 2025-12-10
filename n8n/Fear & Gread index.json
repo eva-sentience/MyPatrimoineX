@@ -1,0 +1,65 @@
+{
+  "name": "Fear & Greed Index",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "hours", "hoursInterval": 6}]
+        }
+      },
+      "name": "Every 6 hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 300],
+      "id": "schedule-trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.alternative.me/fng/",
+        "options": {}
+      },
+      "name": "Get Fear & Greed",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 300],
+      "id": "http-request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.item.json.data[0];\nconst valeur = parseInt(data.value);\nconst classification = data.value_classification;\n\n// Logique: OUI si Greed (> 75)\nconst resultat = valeur > 75 ? 'OUI' : 'NON';\n\nreturn {\n  nom_indicateur: 'fear_greed',\n  categorie: 'sentiment',\n  valeur_numerique: valeur,\n  valeur_texte: resultat,\n  unite: 'score',\n  source_api: 'alternative.me',\n  delta_erreur_attendu: 0,\n  date_valeur: new Date().toISOString().split('T')[0],\n  metadata: JSON.stringify({\n    classification: classification,\n    timestamp_source: data.timestamp\n  })\n};"
+      },
+      "name": "Transform Data",
+      "type": "n8n-nodes-base.code",
+      "position": [680, 300],
+      "id": "code-transform"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "indicateurs_top_marche",
+        "options": {
+          "onConflict": "nom_indicateur,date_valeur"
+        }
+      },
+      "name": "Insert Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "position": [900, 300],
+      "credentials": {
+        "supabaseApi": {
+          "id": "ton_id_credential_supabase",
+          "name": "Supabase PatrimoineX"
+        }
+      },
+      "id": "supabase-insert"
+    }
+  ],
+  "connections": {
+    "Every 6 hours": {
+      "main": [[{"node": "Get Fear & Greed", "type": "main", "index": 0}]]
+    },
+    "Get Fear & Greed": {
+      "main": [[{"node": "Transform Data", "type": "main", "index": 0}]]
+    },
+    "Transform Data": {
+      "main": [[{"node": "Insert Supabase", "type": "main", "index": 0}]]
+    }
+  }
+}

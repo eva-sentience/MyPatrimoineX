@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Auth } from './components/Auth';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
-import { CategoryView } from './components/CategoryView';
+import CategoryView from './components/CategoryView';
 import { GeminiChat } from './components/GeminiChat';
 import { UserProfile, Asset, AssetType } from './types';
 import { storageService } from './services/storageService';

@@ -1,264 +1,158 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 📊 PatrimoineX
 
-# PatrimoineX - Wealth OS 🚀
+Application complète d'analyse crypto avec 44 indicateurs de top de marché, dashboard interactif et automatisation N8N/Supabase.
 
-**Plateforme intelligente de gestion patrimoniale** avec analytics financier en temps réel et IA advisor.
+## ✨ Fonctionnalités
 
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![Supabase](https://img.shields.io/badge/database-Supabase-green)]()
-[![React](https://img.shields.io/badge/react-19.2.0-blue)]()
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)]()
+### 🎯 Analyse Top de Marché
+- **44 indicateurs** répartis en 4 catégories:
+  - 7 Indicateurs Macro-Économiques
+  - 15 Indicateurs On-Chain et Techniques
+  - 12 Indicateurs Empiriques et de Sentiment
+  - 10 Indicateurs Existants (2B2, Dominance, Mayer, RSI, etc.)
 
----
+### 📈 Dashboard en Temps Réel
+- Prix BTC live (Binance API - refresh 5s)
+- Bitcoin Dominance animée
+- Fear & Greed Index (Supabase + Alternative.me)
+- Signal de Trading (force + direction)
+- Score Top Cycle (calcul probabilité)
 
-## ⚡️ Quick Start
+### 🔄 Automatisation
+- Workflows N8N (refresh 15 minutes)
+- Supabase pour Fear & Greed + Halving Countdown
+- Cache intelligent (15 minutes aligné sur N8N)
+- Historique sur 60 jours
 
-```bash
-# Clone & Setup
-git clone https://github.com/eva-sentience/MyPatrimoineX.git
-cd MyPatrimoineX
-npm run setup
+### 🔍 Fonctionnalités Avancées
+- Watchlist crypto personnalisée
+- Recherche CoinGecko (Top 100)
+- TradingView widget intégré
+- Analyse par catégorie (Macro / On-Chain / Empirique)
+- Système de scoring dynamique
 
-# Launch
-npm run dev
+## 🛠 Technologies
+
+- **Frontend:** React 18, TypeScript, TailwindCSS
+- **Backend:** Supabase (PostgreSQL)
+- **Automation:** N8N
+- **Charts:** Recharts, TradingView
+- **Icons:** Lucide React
+- **APIs:** Binance, CoinGecko, CoinPaprika, Alternative.me
+
+## 📂 Structure du Projet
+
 ```
-
-**Ouvre** http://localhost:3000 🎉
-
-📖 **Guide détaillé** : [QUICKSTART.md](QUICKSTART.md)
-
----
-
-## 📊 Fonctionnalités
-
-### 🎯 Core Features
-- ✅ **Dashboard** - Vue d'ensemble du patrimoine avec allocation dynamique
-- ✅ **8 Classes d'actifs** - Stocks, Crypto, Immobilier, Or, Obligations, Private Equity, France Invest, Exotic
-- ✅ **Analytics en temps réel** - KPIs, performance, trends
-- ✅ **10 Indicateurs Bitcoin** - Top/Bottom signals (Mayer Multiple, Pi Cycle, S2F, etc.)
-- ✅ **Macro France** - Dette publique, déficit, défaillances d'entreprises
-- ✅ **Contenu éducatif** - Analyses vidéo, guides, deep dives
-- ✅ **IA Financial Advisor** - Chat Gemini contextuel
-
-### 🔮 Tech Stack
-- **Frontend** : React 19 + TypeScript + Vite
-- **UI** : Tailwind CSS (Dark mode Obsidian)
-- **Charts** : Recharts
-- **Database** : Supabase (PostgreSQL)
-- **IA** : Google Gemini / Claude API
-- **Deploy** : Vercel ready
-
----
-
-## 🗂️ Documentation
-
-| Doc | Description | Temps |
-|-----|-------------|-------|
-| [📄 STATUS.md](STATUS.md) | État du projet & roadmap | 2 min |
-| [🚀 QUICKSTART.md](QUICKSTART.md) | Démarrage rapide | 5 min |
-| [🔄 SUPABASE_MIGRATION.md](SUPABASE_MIGRATION.md) | Guide migration localStorage → Supabase | 30 min |
-| [📊 supabase/README.md](supabase/README.md) | Documentation Supabase détaillée | 15 min |
-
----
-
-## 🏗️ Architecture
-
-### Actuelle (localStorage)
+MyPatrimoineX/
+├── components/
+│   └── CategoryView.tsx        (1847 lignes - composant principal)
+├── services/
+│   ├── btcIndicatorsService.ts (fetch Supabase)
+│   └── supabaseClient.ts       (client Supabase)
+├── constants/
+│   └── TOP_MARKET_INDICATORS   (44 indicateurs)
+├── types/
+│   └── index.ts               (types TypeScript)
+└── docs/
+    └── Stratégie_d_Automatisation.md
 ```
-React Frontend → localStorage → Gemini API
-```
-
-### Cible (Supabase)
-```
-React Frontend → Supabase (PostgreSQL) ← N8N Workflows
-                    ↓
-                Claude API
-```
-
-### Structure BDD Supabase
-
-```sql
-profiles                        -- Utilisateurs
-patrimoinex_assets              -- Actifs financiers
-patrimoinex_market_data         -- Prix en temps réel
-patrimoinex_market_indicators   -- Indicateurs Bitcoin (10)
-patrimoinex_analysis_history    -- Historique analyses
-patrimoinex_portfolio_snapshots -- Snapshots quotidiens
-patrimoinex_education_content   -- Contenu éducatif
-patrimoinex_user_preferences    -- Settings
-patrimoinex_chat_messages       -- Conversations IA
-```
-
-**Status** : 🟢 Configurée et prête (9 tables + 2 vues)
-
----
-
-## 🎨 Screenshots
-
-### Dashboard
-![Dashboard](https://via.placeholder.com/800x400?text=Dashboard+Preview)
-
-### Market Analysis
-![Market](https://via.placeholder.com/800x400?text=Market+Analysis)
-
----
 
 ## 🚀 Installation
 
-### Prérequis
-- Node.js 18+
-- npm ou yarn
-- Compte Supabase (gratuit)
-- Clé API Gemini (optionnel)
-
-### Setup automatique
-
 ```bash
-git clone https://github.com/eva-sentience/MyPatrimoineX.git
-cd MyPatrimoineX
-npm run setup
-```
+# Cloner le repo
+git clone https://github.com/VOTRE_USERNAME/PatrimoineX.git
 
-### Configuration manuelle
-
-```bash
+# Installer les dépendances
 npm install
-cp .env.local.example .env.local
-# Éditer .env.local avec tes credentials
+
+# Configurer les variables d'environnement
+cp .env.example .env
+# Éditer .env avec vos clés Supabase
+
+# Lancer le projet
 npm run dev
 ```
 
-### Test Supabase
+## 🔑 Configuration
 
-```bash
-npm run test:supabase
+### Supabase
+1. Créer un projet sur https://supabase.com
+2. Créer la table `indicateurs_top_marche`:
+```sql
+CREATE TABLE indicateurs_top_marche (
+  id SERIAL PRIMARY KEY,
+  nom_indicateur VARCHAR(100),
+  valeur_numerique DECIMAL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
 ```
+
+### N8N
+1. Installer N8N: https://n8n.io
+2. Créer workflows pour:
+   - Fear & Greed Index (Alternative.me)
+   - Halving Countdown (calcul déterministe)
+
+## 📊 Sources de Données
+
+- **Binance API:** Prix BTC temps réel
+- **Supabase:** Fear & Greed, Halving, historique
+- **CoinGecko:** Recherche crypto (Top 100)
+- **CoinPaprika:** Market cap global
+- **Alternative.me:** Fear & Greed officiel
+- **Yahoo Finance:** Données historiques
+
+## 📈 Indicateurs Disponibles
+
+### Macro-Économiques (7)
+- Liquidités sur le marché US
+- Masse monétaire M2
+- Indice Nasdaq
+- Taux d'intérêt FED
+- Pivot de la FED
+- Indice S&P500
+- Entrées ETFs Bitcoin
+
+### On-Chain et Techniques (15)
+- Surchauffe Bitcoin
+- Plage dynamique NVT
+- Frais transaction BTC/ETH
+- % Adresses en profit
+- Score MVRV-Z
+- NUPL
+- Reserve Risk
+- Top Cap / Delta Top / Prix Terminal
+- HODL Waves
+- Fear & Greed Index ✅ (Supabase)
+- Halving Countdown ✅ (Supabase)
+- Multiple de Puell
+
+### Empiriques (12)
+- Apps crypto Apple Store
+- Lancements nouveaux projets
+- Google Trends (Bitcoin, Ethereum, Buy Bitcoin, Buy Ethereum)
+- Contenu crypto médias
+- Sentiment général marché
+- Prix parabolique
+- Mises à jour projets
+
+## 🎨 Interface
+
+- Design glassmorphism moderne
+- Animations fluides
+- Responsive (mobile/tablet/desktop)
+- Dark mode par défaut
+- Système de catégories colorées
+
+## 📝 Licence
+
+MIT
+
+## 👤 Auteur
+
+**Benjamin** - PatrimoineX
 
 ---
 
-## 📦 Scripts disponibles
-
-```bash
-npm run dev           # Dev server (port 3000)
-npm run build         # Production build
-npm run preview       # Preview production
-npm run setup         # Setup automatique
-npm run test:supabase # Test connexion Supabase
-```
-
----
-
-## 🌐 Déploiement
-
-### Vercel (1-click)
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/eva-sentience/MyPatrimoineX)
-
-Variables d'environnement :
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-- `GEMINI_API_KEY` (optionnel)
-
-### Netlify
-
-```bash
-netlify deploy --prod
-```
-
----
-
-## 🤖 Workflows N8N (optionnel)
-
-### Workflow 1 : Market Data Scraper
-**Fréquence** : Toutes les 15 minutes
-```
-Cron → CoinGecko/Yahoo API → Supabase Insert
-```
-
-### Workflow 2 : Bitcoin Indicators
-**Fréquence** : Toutes les heures
-```
-Cron → TradingView API → Calculate → Supabase Upsert
-```
-
-### Workflow 3 : Daily Snapshots
-**Fréquence** : Minuit UTC
-```
-Cron → Get Users → Calculate Totals → Supabase Insert
-```
-
----
-
-## 📈 Roadmap
-
-### ✅ Phase 1 : MVP (Done)
-- [x] Dashboard & analytics
-- [x] Gestion d'actifs
-- [x] Indicateurs Bitcoin
-- [x] Chat IA
-- [x] Base Supabase configurée
-
-### 🔄 Phase 2 : Supabase (En cours)
-- [ ] Migration localStorage → Supabase
-- [ ] Auth Supabase
-- [ ] Sync multi-device
-- [ ] Real-time updates
-
-### 🚀 Phase 3 : Automation
-- [ ] N8N workflows
-- [ ] Scraping market data
-- [ ] Daily portfolio snapshots
-
-### 🎯 Phase 4 : Advanced
-- [ ] Notifications push
-- [ ] Export PDF/Excel
-- [ ] API publique
-- [ ] Mobile app
-
----
-
-## 🤝 Contributing
-
-Les contributions sont bienvenues ! 
-
-1. Fork le projet
-2. Crée une branche (`git checkout -b feature/AmazingFeature`)
-3. Commit tes changements (`git commit -m 'Add AmazingFeature'`)
-4. Push sur la branche (`git push origin feature/AmazingFeature`)
-5. Ouvre une Pull Request
-
----
-
-## 📄 License
-
-MIT License - voir [LICENSE](LICENSE) pour plus de détails
-
----
-
-## 🙏 Remerciements
-
-- [Supabase](https://supabase.com) - Backend as a Service
-- [Recharts](https://recharts.org) - Graphiques React
-- [Lucide](https://lucide.dev) - Icons
-- [Tailwind CSS](https://tailwindcss.com) - UI Framework
-- [Google Gemini](https://ai.google.dev) - IA Conversationnelle
-
----
-
-## 📞 Support
-
-- 📧 Email : bnjm.elias@gmail.com
-- 🐛 Issues : [GitHub Issues](https://github.com/eva-sentience/MyPatrimoineX/issues)
-- 📚 Docs : Voir les fichiers `.md` dans le repo
-
----
-
-<div align="center">
-
-**Développé avec ❤️ pour la gestion patrimoniale moderne**
-
-[⭐ Star ce projet](https://github.com/eva-sentience/MyPatrimoineX) si tu le trouves utile !
-
-</div>
+⭐ Si ce projet vous aide, n'hésitez pas à lui donner une étoile !

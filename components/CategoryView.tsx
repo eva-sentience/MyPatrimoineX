@@ -13,7 +13,9 @@ import {
   getLatestRSI,
   getLatestMovingAverages,
   formatUpdateTime,
-  getDataFreshnessStatus
+  getDataFreshnessStatus,
+  getLatestFearGreedFromSupabase,
+  getLatestHalvingCountdown
 } from '../services/btcIndicatorsService';
 import type { AllIndicators } from '../services/supabaseClient';
 
@@ -435,6 +437,40 @@ const TopIndicatorsView = () => {
                   console.warn("⚠️ BTC Dominance fetch failed, using default");
               }
 
+              // ✅ FETCH FEAR & GREED depuis Supabase
+              const fearGreedData = await getLatestFearGreedFromSupabase();
+              let fearGreedValue = 0;
+              let fearGreedStatus = "";
+              let fearGreedIsMet = false;
+
+              if (fearGreedData) {
+                  fearGreedValue = fearGreedData.value;
+                  if (fearGreedValue > 75) fearGreedStatus = "Extreme Greed";
+                  else if (fearGreedValue > 50) fearGreedStatus = "Greed";
+                  else if (fearGreedValue > 25) fearGreedStatus = "Neutral";
+                  else fearGreedStatus = "Fear";
+                  
+                  fearGreedIsMet = fearGreedData.isMet;
+                  console.log(`✅ Fear & Greed (Supabase): ${fearGreedValue}/100 (${fearGreedStatus})`);
+              } else {
+                  console.warn("⚠️ Fear & Greed data not available in Supabase");
+              }
+
+              // ✅ FETCH HALVING COUNTDOWN depuis Supabase
+              const halvingData = await getLatestHalvingCountdown();
+              let halvingYears = 0;
+              let halvingDays = 0;
+              let halvingIsMet = false;
+
+              if (halvingData) {
+                  halvingYears = halvingData.years;
+                  halvingDays = halvingData.days;
+                  halvingIsMet = halvingData.isMet;
+                  console.log(`✅ Halving Countdown (Supabase): ${halvingYears.toFixed(1)} ans (~${halvingDays} jours)`);
+              } else {
+                  console.warn("⚠️ Halving Countdown data not available in Supabase");
+              }
+
               // Calculs des indicateurs
               const mayerMultiple = currentPrice / sma200;
               const sma111 = sma200 * 1.08;
@@ -631,8 +667,8 @@ const TopIndicatorsView = () => {
                       titleEng: "Fear and Greed Index",
                       description: "Cet indicateur identifie la mesure dans laquelle le marché devient trop craintif ou trop cupide. L'idée est que lorsque le marché est généralement trop craintif, cela peut indiquer que Bitcoin est bon marché/sous-évalué à ce moment-là et pourrait présenter une bonne opportunité d'achat. L'inverse s'applique également : lorsque l'indice de peur et de cupidité signale que les acteurs du marché sont extrêmement cupides, cela peut indiquer que le prix du Bitcoin est trop élevé au-dessus de sa valeur intrinsèque et que cela pourrait être le bon moment pour vendre.",
                       objective: "« Greed » ou « Extreme Greed »",
-                      isMet: false,
-                      displayValue: "En attente de données...",
+                      isMet: fearGreedIsMet,
+                      displayValue: fearGreedValue > 0 ? `${fearGreedValue}/100 (${fearGreedStatus})` : "⚠️ Données non disponibles",
                       analyzedAt: nowFormatted
                   },
                   {
@@ -640,8 +676,8 @@ const TopIndicatorsView = () => {
                       titleEng: "Time Until Next Halving",
                       description: "Le \"halving\" est un événement programmé qui se produit environ tous les quatre ans (ou tous les 210 000 blocs minés) sur la blockchain du Bitcoin. Il a pour conséquence de diviser par deux la quantité de nouveaux bitcoins créés.",
                       objective: "Halving dans plus de 2 ans",
-                      isMet: false,
-                      displayValue: "En attente de données...",
+                      isMet: halvingIsMet,
+                      displayValue: halvingYears > 0 ? `${halvingYears.toFixed(1)} ans (~${halvingDays.toLocaleString()} jours)` : "⚠️ Données non disponibles",
                       analyzedAt: nowFormatted
                   },
                   {

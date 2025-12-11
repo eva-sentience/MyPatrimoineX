@@ -352,3 +352,64 @@ export function getDataFreshnessStatus(updated_at: string): 'fresh' | 'stale' | 
   if (minutes < 60) return 'stale';  // Données vieillissantes (20-60 min)
   return 'old';                      // Données anciennes (> 60 min)
 }
+/**
+ * Récupère le dernier Fear & Greed Index depuis Supabase
+ */
+export const getLatestFearGreedFromSupabase = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('indicateurs_top_marche')
+      .select('*')
+      .eq('nom_indicateur', 'fear-greed')
+      .order('date_valeur', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) throw error;
+    
+    return {
+      value: data.valeur_numerique,
+      status: data.valeur_texte,
+      unit: data.unite,
+      source: data.source_api,
+      date: data.date_valeur,
+      isMet: data.valeur_numerique > 75
+    };
+  } catch (error) {
+    console.error('❌ Error fetching Fear & Greed from Supabase:', error);
+    return null;
+  }
+};
+
+/**
+ * Récupère le dernier Halving Countdown depuis Supabase
+ */
+export const getLatestHalvingCountdown = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('indicateurs_top_marche')
+      .select('*')
+      .eq('nom_indicateur', 'halving_countdown')
+      .order('date_valeur', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) throw error;
+    
+    const years = data.valeur_numerique;
+    const days = Math.floor(years * 365);
+    
+    return {
+      years: years,
+      days: days,
+      status: data.valeur_texte,
+      unit: data.unite,
+      source: data.source_api,
+      date: data.date_valeur,
+      isMet: years > 2
+    };
+  } catch (error) {
+    console.error('❌ Error fetching Halving Countdown from Supabase:', error);
+    return null;
+  }
+};
